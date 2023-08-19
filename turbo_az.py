@@ -10,13 +10,14 @@ from datetime import datetime
 print('Başladı')
 
 exc_start = time.time()
-page_count = 416
+page_count = 200 # this number can be updated. It depends on how many page you want to scrape
 urls = list()
 
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 for page in range(1, page_count+1):
     url = f'https://turbo.az/autos?page={page}'
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, 'html.parser')
     items = soup.find_all('a', class_='products-i__link')
     urls.append([a_tag.get('href') for a_tag in items]) 
@@ -36,7 +37,7 @@ errors = list()
 def scrape(url):
     
     """
-    Scrapes data from a webpage based on the provided URL.
+    Scrapes data from a webpage based on the provided URL - turbo.az.
 
     Args:
         url (str): The URL of the webpage to scrape.
@@ -45,7 +46,7 @@ def scrape(url):
     data = pd.DataFrame()
     
     
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, 'html.parser')
     
     
@@ -155,6 +156,3 @@ main_data.to_csv(f'{datetime.now().strftime("%b-%d-%Y %H-%M-%S")}.csv',
 
 print(*errors, end='\n')
 print(f'Execution time: {time.time() - exc_start}')
-    
-      
-
